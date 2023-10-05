@@ -1,0 +1,72 @@
+Hadoop HDFS is a distributed file system which provides redundant storage space for files having huge sizes. It is used for storing files which are in the range of terabytes to petabytes. Command Line is one of the simplest interface to HDFS. Below are the basic HDFS File System Commands which are similar to Linux file system commands. Once the hadoop daemons are started running, HDFS file system is ready and file system operations like creating directories, moving files, deleting files, reading files and listing directories.
+1.	mkdir: To create a directory in hadoop file system. Syntax: hdfs fs -mkdir <folder-name>
+
+Example: hdfs fs -mkdir /hello
+2.	ls: This command is used to list all the files and directories. Syntax: hdfs fs -ls <path>
+
+Example: hdfs dfs -ls /
+3.	put: To copy files/folders from local file system to hdfs store. Syntax: hdfs fs -put <local file path> <dest present on hdfs> 
+Example: hdfs fs -put ../Desktop/file.txt /hello
+4.	get: To copy files/folders from hdfs store to local file system. Syntax: hdfs fs -get <srcfile on hdfs> <local file dest> 
+Example: hdfs fs -get /hello/file.txt ..Desktop/folder
+5.	cat: To print file contents. Syntax: hdfs fs -put <path>
+
+Example: hdfs fs -cat /hello/file.txt
+6.	cp: This command is used to copy files within hdfs. Syntax: hdfs fs -cp <src on hdfs> <dest on hdfs> 
+Example: hdfs -cp /hello /hello1
+7.	mv: This command is used to move files within hdfs. Syntax: hdfs fs -mv <src on hdfs> <dest on hdfs> 
+Example: hdfs -mv /hello/myfile.txt /hello1
+8.	rm: This command removes the file or empty directory identified by path. Syntax: hdfs fs -rm <path>
+
+Example: hdfs fs -rm /hello/file.txt
+9.	getmerge: This command retrieves all files that match the path src in HDFS, and copies them to a single, merged file in the local file system identified by localDest.
+ 
+Syntax: hdfs fs -getmerge <src> <localDest> 
+Example:
+10.	setrep: This command is used to change the replication factor of a file/directory in HDFS. By default it is 3 for anything which is stored in HDFS (as set in hdfs core- site.xml).
+Syntax: hadoop fs -setrep <rep_factor> <path> 
+Example: hadoop fs -setrep 6 hello/sample
+11.	touchz: It creates an empty file. Syntax: hdfs fs -touchz <file-path>
+
+Example: hdfs fs -touchz /hello/myfile.txt
+12.	test: Returns 1 if path exists; has zero length; or is a directory or 0 otherwise. Options	Description
+-d Check whether the path given by the user is a directory or not, return 0 if it is a directory.
+-e	Check whether the path given by the user exists or not, return 0 if the path exists.
+-f	Check whether the path given by the user is a file or not, return 0 if it is a file.
+-s	Check if the path is not empty, return 0 if a path is not empty.
+-r	return 0 if the path exists and read permission is granted
+-w	return 0 if the path exists and write permission is granted
+-z	Checks whether the file size is 0 byte or not, return 0 if the file is of 0 bytes. Syntax: hdfs fs -test -[ezd] <path>
+
+Example: hdfs fs -test -d /sample
+13.	appendToFile: The HDFS fs shell command appendToFile appends the content of single or multiple local files specified in the localsrc to the provided destination file on the HDFS.
+Syntax: hadoop fs -appendToFile <localsrc> <dest> 
+Example: hadoop fs -appendToFile /hello/file /hello1/sample
+14.	df: The Hadoop fs shell command df shows the capacity, size, and free space available on the HDFS file system.The -h option formats the file size in the human-readable format.
+Syntax: hadoop fs -df [-h] <path> 
+Example: hadoop fs -df -h
+15.	du: This Hadoop fs shell command du prints a summary of the amount of disk usage
+ 
+of all files/directories in the path. Syntax: hdfs fs -du <dirName> 
+Example: hdfs fs -du /hello
+16.	count: The Hadoop fs shell command count counts the number of files, directories, and bytes under the paths that matches the specified file pattern.
+Options:
+-q – shows quotas(quota is the hard limit on the number of names and amount of space used for individual directories)
+-u –  it limits output to show quotas and usage only
+-h – shows sizes in a human-readable format
+-v – shows header line
+Syntax: hadoop fs -count [options] <path> 
+Example: hadoop fs -count -v /
+
+17.	chgrp: The Hadoop fs shell command chgrp changes the group of the file specified in the path. The user must be the owner of the file or superuser. Sets group recursively if
+-R is specified.
+Syntax: hdfs fs -chgrp [-R] group <path>... 
+Example: hdfs fs -chgrp newgroup /hello
+18.	chmod: Changes the file permissions associated with one or more objects identified by path. Performs changes recursively with -R. Mode is a 3-digit octal mode, or
+{augo}+/-{rwxX}. Assumes if no scope is specified and does not apply an umask. Syntax: hdfs fs -chmod [-R] mode,mode,.. <path>
+
+Example: hdfs fs -chmod 744 /sample/file.txt
+19.	chown: Sets the owning user and/or group for files or directories identified by path....
+Sets owner recursively if -R is specified.
+Syntax: hdfs fs -chown [-R] [owner][:[group]] <path> 
+Example: hadoop fs -chown newsample /hello

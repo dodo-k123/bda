@@ -1,0 +1,80 @@
+#################
+Description
+#################
+Data Format
+The data is from the National Climatic Data Center (NCDC, http://www .ncdc.noaa.gov/). The data is stored using a line-oriented ASCII format, in which each line is a record. The format supports a rich set of meteorological elements, many of which are optional or with variable data lengths. For simplicity, we shall focus on the basic elements, such as temperature, which are always present and are of fixed width.
+ 
+Example:
+0057
+332130 # USAF weather station identifier 99999 # WBAN weather station identifier 19500101 # observation date
+0300 # observation time
+Since there are tens of thousands of weather stations, the whole dataset is made up of a large number of relatively small files. It’s generally easier and more efficient to process a smaller number of relatively large files, so the data was preprocessed so that each year’s readings were concatenated into a single file.The script loops through the compressed year files, first printing the year, and then processing each file using awk. The awk script extracts two fields from the data: the air temperature and the quality code.
+
+#################
+dataset link
+#################
+https://www.ncei.noaa.gov/pub/data/uscrn/products/daily01/
+
+Steps for execution in python:
+Step 1: Open terminal and create a text file and move it to the hadoop store using the following command.
+Make a directory
+$ hadoop fs -mkdir /weather_data
+$hadoop fs -mkdir /weather_data/input Move the text file onto the hadoop store.
+$ hadoop fs -put /home /Desktop/Lab/weather/*	/weather/inp
+
+Step 2: Type in the mapper code and reducer code. 
+#################
+my_mapper.py
+#################
+#!/usr/bin/env python2
+"""temp_mapper.py"""
+
+import sys
+
+l = []
+for line in sys.stdin:
+    line = line.strip()
+    year=int(line[15:19])
+    temp=int(line[87:92])
+    l.append([year,temp])
+for record in l:
+    print('%s\t%s' %(record[0],record[1]))
+
+
+
+#################
+my_reducer.py
+#################
+#!/usr/bin/env python2
+"""temp_reducer.py"""
+
+import sys
+
+dmax = {}
+y_list = []
+dmin = {}
+
+for line in sys.stdin:
+    line = line.strip()
+    year,temp = map(int,line.split())
+    if year not in y_list:
+        y_list.append(year)
+        dmax[year]=temp
+        dmin[year]=temp
+    else:
+        if dmax[year]<temp:
+            dmax[year]=temp
+        if dmin[year]>temp:
+            dmin[year]=temp
+            
+print('--------------------------------')
+print('year\tmax_temp\tmin_temp')
+print('--------------------------------')
+for i in dmax.keys():
+    print('%s\t%s\t%s' %(i,dmax[i],dmin[i]))
+
+---------------------------
+Step 3: Run the following command.
+$ hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.0.jar -file mapperpath -mapper “python3 mapper.py” -reducer path -reducer “python3 reducer.py” - input /weather /inp/* -output /weather/out
+Step 4: Open result on the terminal Or you can see your result in Hadoop Web Interface http://localhost:50070/
+Goto utilities> Browse file System> /weather_data/OUT
